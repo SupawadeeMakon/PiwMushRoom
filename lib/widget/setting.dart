@@ -8,7 +8,7 @@ class Setting extends StatefulWidget {
 class _SettingState extends State<Setting> {
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return Container(color: Colors.pink.shade200,
       child: Text('This is Settting'),
     );
   }
