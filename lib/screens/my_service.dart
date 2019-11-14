@@ -12,6 +12,7 @@ class MyService extends StatefulWidget {
 class _MyServiceState extends State<MyService> {
   //Field
   final scaffoldKey = GlobalKey<ScaffoldState>();
+  String login = '...';
 
   //Method
 
@@ -25,7 +26,41 @@ class _MyServiceState extends State<MyService> {
   }
 
   Widget showDrawer() {
-    return Drawer();
+    return Drawer(
+      child: ListView(
+        children: <Widget>[showHead()],
+      ),
+    );
+  }
+
+  Widget showHead() {
+    return DrawerHeader(
+      decoration: BoxDecoration(
+          image: DecorationImage(
+              image: AssetImage('images/wall.jpg'), fit: BoxFit.cover)),
+      child: Column(
+        children: <Widget>[
+          showLogo(),
+          showAppName(),
+          showLogin(),
+        ],
+      ),
+    );
+  }
+
+  Widget showLogo() {
+    return Container(
+      height: 80.0,
+      child: Image.asset('images/logo.png'),
+    );
+  }
+
+  Widget showAppName() {
+    return Text('Piw MushRoom');
+  }
+
+  Widget showLogin() {
+    return Text('Login by $login');
   }
 
   Widget tabsMonitor() {

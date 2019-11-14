@@ -1,6 +1,7 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:piwmushoom/models/iot_mode.dart';
+import 'package:piwmushoom/utility/my_style.dart';
 
 class Setting extends StatefulWidget {
   @override
@@ -69,7 +70,7 @@ class _SettingState extends State<Setting> {
         initialValue: humLow,
         keyboardType: TextInputType.number, //บังคับให้กรอกแต่ตัวเลข
         decoration: InputDecoration(
-            helperText: 'Current: $humLow',
+            helperText: 'Current: $humLow',helperStyle: MyStyle().red18,
             enabledBorder: OutlineInputBorder(borderSide: BorderSide()),
             labelText: 'Humidity_Low'),
         onSaved: (String value) {
@@ -156,6 +157,7 @@ class _SettingState extends State<Setting> {
       ),
     );
   }
+
 
   Widget uploadValue() {
     return RaisedButton.icon(
