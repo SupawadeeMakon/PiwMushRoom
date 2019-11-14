@@ -39,6 +39,9 @@ class _MonitorState extends State<Monitor> {
 
   @override
   Widget build(BuildContext context) {
-    return Center(child: Text('Monitor'),);
+    return Container(color: Colors.pink.shade300,
+        child: Center(
+      child: Text('Monitor'),
+    ));
   }
 }
