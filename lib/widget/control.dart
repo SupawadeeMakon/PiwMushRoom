@@ -15,6 +15,8 @@ class _ControlState extends State<Control> {
       waterBool = false,
       lightBool = false;
 
+  int modeInt = 0, fogInt = 0, fanInt = 0, waterInt = 0, lightInt = 0;
+
   IotModel iotModel;
 
   //Method
@@ -36,6 +38,14 @@ class _ControlState extends State<Control> {
     await databaseReference.once().then((DataSnapshot dataSnapshot) {
       print('dataSnapshot = ${dataSnapshot.value}');
       iotModel = IotModel.formMap(dataSnapshot.value);
+
+      /*อ่านค่าจากFirebase มาเก็บในตัวแปร*/
+      modeInt = iotModel.mode;
+      fogInt = iotModel.fog;
+      fanInt = iotModel.fan;
+      waterInt = iotModel.water;
+      lightInt = iotModel.light;
+
       checkSwitch();
     });
   }
@@ -43,43 +53,43 @@ class _ControlState extends State<Control> {
   void checkSwitch() {
     setState(() {
       if (iotModel.mode == 0) {
-      modeBool = false;
-    } else {
-      modeBool = true;
-    }
+        modeBool = false;
+      } else {
+        modeBool = true;
+      }
 
-    if (iotModel.fog == 0) {
-      fogBool = false;
-    } else {
-      fogBool = true;
-    }
+      if (iotModel.fog == 0) {
+        fogBool = false;
+      } else {
+        fogBool = true;
+      }
 
-    if (iotModel.fan == 0) {
-      fanBool = false;
-    } else {
-      fanBool = true;
-    }
+      if (iotModel.fan == 0) {
+        fanBool = false;
+      } else {
+        fanBool = true;
+      }
 
-    if (iotModel.water == 0) {
-      waterBool = false;
-    } else {
-      waterBool = true;
-    }
+      if (iotModel.water == 0) {
+        waterBool = false;
+      } else {
+        waterBool = true;
+      }
 
-    if (iotModel.light == 0) {
-      lightBool = false;
-    } else {
-      lightBool = true;
-    }
-
+      if (iotModel.light == 0) {
+        lightBool = false;
+      } else {
+        lightBool = true;
+      }
     });
     print(
-        'mode=$modeBool,fog=$fanBool,fan=$fanBool,water=$waterBool,light=$lightBool');
+        'mode=$modeBool,fog=$fogBool,fan=$fanBool,water=$waterBool,light=$lightBool');
   }
 
   Widget switchMode() {
     return Container(
-      child: Card(color: Colors.red.shade300,
+      child: Card(
+        color: Colors.red.shade300,
         //ใส่กรอบให้switch
         child: Container(
           padding: EdgeInsets.all(16.0),
@@ -94,7 +104,7 @@ class _ControlState extends State<Control> {
                   Switch(
                     value: modeBool,
                     onChanged: (bool value) {
-                      changeBool(value);
+                      changeModeBool(value);
                     },
                   ),
                   Text('Manual')
@@ -125,7 +135,7 @@ class _ControlState extends State<Control> {
                   Switch(
                     value: fogBool,
                     onChanged: (bool value) {
-                      changeBool(value);
+                      changeFogBool(value);
                     },
                   ),
                   Text('on')
@@ -156,7 +166,7 @@ class _ControlState extends State<Control> {
                   Switch(
                     value: fanBool,
                     onChanged: (bool value) {
-                      changeBool(value);
+                      changeFanBool(value);
                     },
                   ),
                   Text('on')
@@ -187,7 +197,7 @@ class _ControlState extends State<Control> {
                   Switch(
                     value: waterBool,
                     onChanged: (bool value) {
-                      changeBool(value);
+                      changeWaterBool(value);
                     },
                   ),
                   Text('on')
@@ -218,7 +228,7 @@ class _ControlState extends State<Control> {
                   Switch(
                     value: lightBool,
                     onChanged: (bool value) {
-                      changeBool(value);
+                      changeLightBool(value);
                     },
                   ),
                   Text('on')
@@ -231,20 +241,93 @@ class _ControlState extends State<Control> {
     );
   }
 
-  void changeBool(bool value) {
+  Future<void> editDatabase() async {
+    //ฟังก์ชันโยนค่าขึ้นFirebase
+
+    print(
+        'mode=$modeBool,fog=$fogBool,fan=$fanBool,water=$waterBool,light=$lightBool');
+    FirebaseDatabase firebaseDatabase = FirebaseDatabase.instance;
+    DatabaseReference databaseReference =
+        firebaseDatabase.reference().child('IoT');
+
+    Map<dynamic, dynamic> map = Map();
+
+    map['Suitable_Humi'] = iotModel.suitableHumi;
+    map['Suitable_Tem'] = iotModel.suitableTem;
+    map['Fog'] = fogInt;
+    map['Fan'] = fanInt;
+    map['Humidity_Low'] = iotModel.humidityLow;
+    map['Humidity_High'] = iotModel.humidityHigh;
+    map['Light'] = lightInt;
+    map['Mode'] = modeInt;
+    map['Temp_High'] = iotModel.tempHigh;
+    map['Temp_Low'] = iotModel.tempLow;
+    map['Water'] = waterInt;
+
+    //โยนขึ้น Firebase
+    await databaseReference.set(map).then((response) {
+      print('Edit Success');
+    });
+  }
+
+  void changeModeBool(bool value) {
     setState(() {
       modeBool = value;
-      // fanBool = value;
-      // fogBool = value;
-      // waterBool = value;
-      // lightBool = value;
+      if (modeBool) {
+        modeInt = 1;
+      } else {
+        modeInt = 0;
+      }
+      editDatabase();
+    });
+  }
 
-      print('modeBool=$modeBool');
-      // print('modeBool=$fogBool');
-      // print('modeBool=$fanBool');
-      // print('modeBool=$waterBool');
-      // print('modeBool=$lightBool');
-      
+  void changeFogBool(bool value) {
+    setState(() {
+      fogBool = value;
+      if (fogBool) {
+        fogInt = 1;
+      } else {
+        fogInt = 0;
+      }
+
+      editDatabase();
+    });
+  }
+
+  void changeFanBool(bool value) {
+    setState(() {
+      fanBool = value;
+      if (fanBool) {
+        fanInt = 1;
+      } else {
+        fanInt = 0;
+      }
+      editDatabase();
+    });
+  }
+
+  void changeWaterBool(bool value) {
+    setState(() {
+      waterBool = value;
+      if (waterBool) {
+        waterInt = 1;
+      } else {
+        waterInt = 0;
+      }
+      editDatabase();
+    });
+  }
+
+  void changeLightBool(bool value) {
+    setState(() {
+      lightBool = value;
+      if (lightBool) {
+        lightInt = 1;
+      } else {
+        lightInt = 0;
+      }
+      editDatabase();
     });
   }
 
