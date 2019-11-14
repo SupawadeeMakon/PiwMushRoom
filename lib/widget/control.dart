@@ -1,4 +1,6 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:piwmushoom/models/iot_mode.dart';
 
 class Control extends StatefulWidget {
   @override
@@ -13,11 +15,71 @@ class _ControlState extends State<Control> {
       waterBool = false,
       lightBool = false;
 
+  IotModel iotModel;
+
   //Method
+
+  @override
+  void initState() {
+    //ทำงานก่อน buid
+    super.initState();
+    readDatabase();
+  }
+
+  Future<void> readDatabase() async {
+    FirebaseDatabase firebaseDatabase =
+        FirebaseDatabase.instance; //เรียกใช้งาน firebaseDatatbase
+    DatabaseReference databaseReference = firebaseDatabase
+        .reference()
+        .child('IoT'); //เข้าถึงpath ในDatabaseFirebase
+
+    await databaseReference.once().then((DataSnapshot dataSnapshot) {
+      print('dataSnapshot = ${dataSnapshot.value}');
+      iotModel = IotModel.formMap(dataSnapshot.value);
+      checkSwitch();
+    });
+  }
+
+  void checkSwitch() {
+    setState(() {
+      if (iotModel.mode == 0) {
+      modeBool = false;
+    } else {
+      modeBool = true;
+    }
+
+    if (iotModel.fog == 0) {
+      fogBool = false;
+    } else {
+      fogBool = true;
+    }
+
+    if (iotModel.fan == 0) {
+      fanBool = false;
+    } else {
+      fanBool = true;
+    }
+
+    if (iotModel.water == 0) {
+      waterBool = false;
+    } else {
+      waterBool = true;
+    }
+
+    if (iotModel.light == 0) {
+      lightBool = false;
+    } else {
+      lightBool = true;
+    }
+
+    });
+    print(
+        'mode=$modeBool,fog=$fanBool,fan=$fanBool,water=$waterBool,light=$lightBool');
+  }
 
   Widget switchMode() {
     return Container(
-      child: Card(
+      child: Card(color: Colors.red.shade300,
         //ใส่กรอบให้switch
         child: Container(
           padding: EdgeInsets.all(16.0),
@@ -48,6 +110,7 @@ class _ControlState extends State<Control> {
   Widget switchFog() {
     return Container(
       child: Card(
+        color: Colors.yellow.shade600,
         //ใส่กรอบให้switch
         child: Container(
           padding: EdgeInsets.all(16.0),
@@ -60,7 +123,7 @@ class _ControlState extends State<Control> {
                 children: <Widget>[
                   Text('off'),
                   Switch(
-                    value: modeBool,
+                    value: fogBool,
                     onChanged: (bool value) {
                       changeBool(value);
                     },
@@ -77,7 +140,8 @@ class _ControlState extends State<Control> {
 
   Widget switchFan() {
     return Container(
-      child: Card(color: Colors.yellow.shade700,
+      child: Card(
+        color: Colors.yellow.shade900,
         //ใส่กรอบให้switch
         child: Container(
           padding: EdgeInsets.all(16.0),
@@ -90,7 +154,7 @@ class _ControlState extends State<Control> {
                 children: <Widget>[
                   Text('off'),
                   Switch(
-                    value: modeBool,
+                    value: fanBool,
                     onChanged: (bool value) {
                       changeBool(value);
                     },
@@ -107,7 +171,8 @@ class _ControlState extends State<Control> {
 
   Widget switchWater() {
     return Container(
-      child: Card(color: Colors.yellow.shade300,
+      child: Card(
+        color: Colors.amber.shade400,
         //ใส่กรอบให้switch
         child: Container(
           padding: EdgeInsets.all(16.0),
@@ -120,7 +185,7 @@ class _ControlState extends State<Control> {
                 children: <Widget>[
                   Text('off'),
                   Switch(
-                    value: modeBool,
+                    value: waterBool,
                     onChanged: (bool value) {
                       changeBool(value);
                     },
@@ -137,7 +202,8 @@ class _ControlState extends State<Control> {
 
   Widget switchLight() {
     return Container(
-      child: Card(color: Colors.yellow,
+      child: Card(
+        color: Colors.amber.shade700,
         //ใส่กรอบให้switch
         child: Container(
           padding: EdgeInsets.all(16.0),
@@ -150,7 +216,7 @@ class _ControlState extends State<Control> {
                 children: <Widget>[
                   Text('off'),
                   Switch(
-                    value: modeBool,
+                    value: lightBool,
                     onChanged: (bool value) {
                       changeBool(value);
                     },
@@ -168,7 +234,17 @@ class _ControlState extends State<Control> {
   void changeBool(bool value) {
     setState(() {
       modeBool = value;
+      // fanBool = value;
+      // fogBool = value;
+      // waterBool = value;
+      // lightBool = value;
+
       print('modeBool=$modeBool');
+      // print('modeBool=$fogBool');
+      // print('modeBool=$fanBool');
+      // print('modeBool=$waterBool');
+      // print('modeBool=$lightBool');
+      
     });
   }
 
@@ -197,10 +273,11 @@ class _ControlState extends State<Control> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(//ใส่สีbackgroud
+      decoration: BoxDecoration(
+          //ใส่สีbackgroud
           gradient: RadialGradient(
         colors: [Colors.white, Colors.pink.shade200],
-        radius: 1.0,//การกระจายสี
+        radius: 1.0, //การกระจายสี
       )),
       child: Center(
         child: Column(
