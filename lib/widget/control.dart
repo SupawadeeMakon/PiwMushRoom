@@ -7,18 +7,160 @@ class Control extends StatefulWidget {
 
 class _ControlState extends State<Control> {
   //Field
-  bool modeBool = false;
+  bool modeBool = false,
+      fogBool = false,
+      fanBool = false,
+      waterBool = false,
+      lightBool = false;
 
   //Method
 
   Widget switchMode() {
     return Container(
-      width: 100.0,
-      child: Switch(
-        value: modeBool,
-        onChanged: (bool value) {
-          changeBool(value);
-        },
+      child: Card(
+        //ใส่กรอบให้switch
+        child: Container(
+          padding: EdgeInsets.all(16.0),
+          child: Column(
+            //เรียงตัวจากบนลงล่าง
+            children: <Widget>[
+              Text('Mode'),
+              Row(
+                //เรียงตัวซ้ายไปขวา
+                children: <Widget>[
+                  Text('Auto'),
+                  Switch(
+                    value: modeBool,
+                    onChanged: (bool value) {
+                      changeBool(value);
+                    },
+                  ),
+                  Text('Manual')
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget switchFog() {
+    return Container(
+      child: Card(
+        //ใส่กรอบให้switch
+        child: Container(
+          padding: EdgeInsets.all(16.0),
+          child: Column(
+            //เรียงตัวจากบนลงล่าง
+            children: <Widget>[
+              Text('Fog'),
+              Row(
+                //เรียงตัวซ้ายไปขวา
+                children: <Widget>[
+                  Text('off'),
+                  Switch(
+                    value: modeBool,
+                    onChanged: (bool value) {
+                      changeBool(value);
+                    },
+                  ),
+                  Text('on')
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget switchFan() {
+    return Container(
+      child: Card(color: Colors.yellow.shade700,
+        //ใส่กรอบให้switch
+        child: Container(
+          padding: EdgeInsets.all(16.0),
+          child: Column(
+            //เรียงตัวจากบนลงล่าง
+            children: <Widget>[
+              Text('Fan'),
+              Row(
+                //เรียงตัวซ้ายไปขวา
+                children: <Widget>[
+                  Text('off'),
+                  Switch(
+                    value: modeBool,
+                    onChanged: (bool value) {
+                      changeBool(value);
+                    },
+                  ),
+                  Text('on')
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget switchWater() {
+    return Container(
+      child: Card(color: Colors.yellow.shade300,
+        //ใส่กรอบให้switch
+        child: Container(
+          padding: EdgeInsets.all(16.0),
+          child: Column(
+            //เรียงตัวจากบนลงล่าง
+            children: <Widget>[
+              Text('Water'),
+              Row(
+                //เรียงตัวซ้ายไปขวา
+                children: <Widget>[
+                  Text('off'),
+                  Switch(
+                    value: modeBool,
+                    onChanged: (bool value) {
+                      changeBool(value);
+                    },
+                  ),
+                  Text('on')
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget switchLight() {
+    return Container(
+      child: Card(color: Colors.yellow,
+        //ใส่กรอบให้switch
+        child: Container(
+          padding: EdgeInsets.all(16.0),
+          child: Column(
+            //เรียงตัวจากบนลงล่าง
+            children: <Widget>[
+              Text('Light'),
+              Row(
+                //เรียงตัวซ้ายไปขวา
+                children: <Widget>[
+                  Text('off'),
+                  Switch(
+                    value: modeBool,
+                    onChanged: (bool value) {
+                      changeBool(value);
+                    },
+                  ),
+                  Text('on')
+                ],
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -30,26 +172,41 @@ class _ControlState extends State<Control> {
     });
   }
 
+  Widget modeRow() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisSize: MainAxisSize.max,
+      children: <Widget>[switchMode()],
+    );
+  }
+
   Widget topRow() {
     return Row(
       mainAxisSize: MainAxisSize.min,
-      children: <Widget>[switchMode(), switchMode()],
+      children: <Widget>[switchFog(), switchFan()],
     );
   }
 
   Widget bottonRow() {
     return Row(
       mainAxisSize: MainAxisSize.min,
-      children: <Widget>[switchMode(), switchMode()],
+      children: <Widget>[switchWater(), switchLight()],
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[topRow(), bottonRow()],
+    return Container(
+      decoration: BoxDecoration(//ใส่สีbackgroud
+          gradient: RadialGradient(
+        colors: [Colors.white, Colors.pink.shade200],
+        radius: 1.0,//การกระจายสี
+      )),
+      child: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[modeRow(), topRow(), bottonRow()],
+        ),
       ),
     );
   }
