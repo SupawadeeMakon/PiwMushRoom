@@ -1,7 +1,13 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:piwmushoom/screens/home.dart';
 import 'package:piwmushoom/utility/my_style.dart';
+import 'package:piwmushoom/widget/add_display_name.dart';
 import 'package:piwmushoom/widget/control.dart';
+import 'package:piwmushoom/widget/home_services.dart';
 import 'package:piwmushoom/widget/monitor.dart';
+import 'package:piwmushoom/widget/page2.dart';
+import 'package:piwmushoom/widget/page3.dart';
 import 'package:piwmushoom/widget/setting.dart';
 
 class MyService extends StatefulWidget {
@@ -13,6 +19,7 @@ class _MyServiceState extends State<MyService> {
   //Field
   final scaffoldKey = GlobalKey<ScaffoldState>();
   String login = '...';
+  Widget currentWidget = HomeService();
 
   //Method
 
@@ -28,7 +35,14 @@ class _MyServiceState extends State<MyService> {
   Widget showDrawer() {
     return Drawer(
       child: ListView(
-        children: <Widget>[showHead()],
+        children: <Widget>[
+          showHead(),
+          menuHome(),
+          menuAddDisplayName(),
+          menuPage2(),
+          menuPage3(),
+          menuSignOut(),
+        ],
       ),
     );
   }
@@ -56,11 +70,101 @@ class _MyServiceState extends State<MyService> {
   }
 
   Widget showAppName() {
-    return Text('Piw MushRoom');
+    return Text(
+      'Piw MushRoom',
+      style: TextStyle(color: Colors.white),
+    );
   }
 
   Widget showLogin() {
-    return Text('Login by $login');
+    return Text(
+      'Login by $login',
+      style: TextStyle(color: Colors.white),
+    );
+  }
+
+  Widget menuAddDisplayName() {
+    return ListTile(
+      leading: Icon(Icons.filter_1),
+      title: Text('Add Display Name'),
+      subtitle: Text('Add of Change Display Name'),
+      onTap: () {
+        Navigator.of(context).pop();
+        setState(() {
+          currentWidget = AddDisplayName();
+        });
+      },
+    );
+  }
+
+  Widget menuPage2() {
+    return ListTile(
+      leading: Icon(Icons.filter_1),
+      title: Text('Add menuPage2 Name'),
+      subtitle: Text('Add of Change menuPage2 Name'),
+      onTap: () {
+        Navigator.of(context).pop();
+        setState(() {
+          currentWidget = Page2State();
+        });
+      },
+    );
+  }
+
+  Widget menuPage3() {
+    return ListTile(
+      leading: Icon(Icons.filter_1),
+      title: Text('Add menuPage3 Name'),
+      subtitle: Text('Add of Change menuPage3 Name'),
+      onTap: () {
+        Navigator.of(context).pop();
+        currentWidget = Page3State();
+      },
+    );
+  }
+
+  Widget menuSignOut() {
+    return ListTile(
+      leading: Icon(Icons.filter_1),
+      title: Text('Log Out'),
+      subtitle: Text('Log Out and Back Authen'),
+      onTap: () {
+        Navigator.of(context).pop();
+        processLogOut();
+      },
+    );
+  }
+
+  //ติดต่อfirebaseเพื่อlogout
+
+  Future<void> processLogOut() async {
+    FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+    await firebaseAuth.signOut().then((response) {
+      MaterialPageRoute materialPageRoute =
+          MaterialPageRoute(builder: (BuildContext context) {
+        return Home();
+      });
+      Navigator.of(context).pushAndRemoveUntil(materialPageRoute,
+          (Route<dynamic> route) {
+        return false;
+      });
+      //Navigator.of(context).pushAndRemoveUntil(materialPageRoute, (Route<dynamic> route){return false;))
+    });
+  }
+
+  Widget menuHome() {
+    return ListTile(
+      leading: Icon(Icons.filter_1),
+      title: Text('Home'),
+      subtitle: Text('Dricrution Home'),
+      onTap: () {
+        Navigator.of(context).pop();
+
+        setState(() {
+          currentWidget = HomeService();
+        });
+      },
+    );
   }
 
   Widget tabsMonitor() {
@@ -112,8 +216,11 @@ class _MyServiceState extends State<MyService> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text('My Service'),
+      ),
       key: scaffoldKey,
-      body: showTabController(),
+      body: currentWidget, //showTabController(),
       drawer: showDrawer(),
     );
   }

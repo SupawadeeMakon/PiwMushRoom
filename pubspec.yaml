@@ -25,6 +25,7 @@ dependencies:
   cupertino_icons: ^0.1.2
   firebase_auth: ^0.14.0+8
   firebase_database: ^3.0.9
+  flutter_webview_plugin: ^0.3.9
   # webview_flutter: ^0.3.15+1 # ^ คือให้หาตัวที่สูงกว่าเวอร์ชันนี้หรือทำไม่มีให้ใช่ตัวนี้
 
 dev_dependencies:
